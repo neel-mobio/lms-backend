@@ -1,61 +1,55 @@
-const { db,firebaseSecondaryApp } = require("../../config/admin")
+const { db, firebaseSecondaryApp } = require("../../config/admin")
 const { validateUserData } = require('./userHelper')
 
 
 exports.newUser = async (req, res) => {
+    const data = req.body
+    const { valid, errors } = validateUserData(data);
     try {
-        const data = req.body 
-        console.log(req.body,"body********")
-        const userData = {
-            user_firstname: data.firstName,
-            user_lastname: data.lastName,
-            user_type: "member",
-            user_phone_number: data.phoneNumber,
-            user_email: data.email,
-            user_password: data.password,
-            user_profile: data.url,
-            is_deleted: false,
-            created_at: new Date(),
-        };
-        // const { valid, errors } = validateUserData(userData);
-        // if (!valid) {
-        //     return res.status(400).json({
-        //         errors,
-        //     });
-        // } else {
-            const newAdmin = await firebaseSecondaryApp
-                // .auth()
-                .createUserWithEmailAndPassword(userData.user_email,userData.user_password);
-
-            await db.collection("users").doc(newAdmin.user.uid).set(userData);
+        if (!valid) {
+            return res.status(400).json({
+                errors,
+            });
+        } else {
+            const userData = {
+                user_firstname: data.firstName,
+                user_lastname: data.lastName,
+                user_type: "member",
+                user_havebook:[],
+                user_phone_number: data.phoneNumber,
+                user_email: data.email,
+                user_password: data.password,
+                user_profile: data.url,
+                is_deleted: false,
+                created_at: new Date(),
+            };
+            const newUser = await firebaseSecondaryApp.auth().createUserWithEmailAndPassword(userData.user_email, userData.user_password);
+            await db.collection("users").doc(newUser.user.uid).set(userData);
             // firebaseSecondaryApp.auth().signOut();
             return res.status(200).json({
-                message: "Admin is created...!!",
+                message: "User is created...!!",
             });
-        // }
-    } catch (error) {
+        }
+    }
+    catch (error) {
         const errors = [];
-        // if (error.code == "auth/email-already-in-use") {
-        //     errors.push({ msg: "Email already exists!" });
-        //     return res.status(400)({
-        //         errors,
-        //     });
-        // }
-        // errors.push({ msg: error.message });
-        return res.status(400)({ errors:"something want to worng" });
+        if (error.code == "auth/email-already-in-use") {
+            errors.push({ msg: "Email already exists!" });
+            return res.status(400)({
+                errors,
+            });
+        }
+        errors.push({ msg: error.message });
+        return res.status(400).json({ errors: "something want to worng" });
     }
 };
-
 
 exports.listUsers = async (req, res) => {
     try {
         const users = [];
         const data = await db.collection("users").orderBy('created_at', 'desc').get();
         data.forEach((doc) => {
-            if (
-                (doc.data().user_type == "Member" || doc.data().user_type == "member") &&
-                doc.data().is_deleted === false
-            ) {
+            if (doc.data().is_deleted === false) {
                 const user = { id: doc.id, userData: doc.data() };
                 users.push(user);
             }
@@ -65,3 +59,76 @@ exports.listUsers = async (req, res) => {
         return res.status(400).json({ error: "Something want to wrong..." })
     }
 };
+
+exports.userDetails = async (req, res) => {
+    try {
+        const errors = [];
+        const id = req.params.user_id;
+        const data = await db.collection("users").doc(id).get();
+        if (data.data() === undefined) {
+            errors.push({ msg: "User data not found...!!" });
+            return res.status(403).json({
+                errors
+            })
+        }
+        const userData = data.data();
+        return res.status(200).json({ userData: userData });
+    } catch (error) {
+        const errors = [];
+        errors.push({ msg: error.message });
+        return res.status(400).json(error);
+    }
+};
+
+exports.updateUserDetails = async (req, res) => {
+    try {
+        const id = req.params.user_id;
+        const data = req.body;
+        const { valid, errors } = validateUserData(data);
+        if (!valid) {
+            return res.status(400).json({
+                errors
+            });
+        }
+        const userData = {
+            user_firstname: data.firstName,
+            user_lastname: data.lastName,
+            user_phone_number: data.phoneNumber,
+            user_email: data.email,
+            user_password: data.password,
+            user_profile: data.url,
+            created_at: new Date(),
+        };
+
+        const updateUser = await db.collection("users").doc(id);
+        await updateUser.update(userData);
+        const ud = await updateUser.get();
+        const updatedData = ud.data()
+        return res.status(200).json({ userData: updatedData })
+    } catch (error) {
+        const errors = [];
+        errors.push({ msg: error.code });
+        return res.status(400).json({ error })
+    }
+};
+
+exports.userRemove = async (req, res) => {
+    try {
+        const id = req.params.user_id;
+        const data = await db.collection("users").doc(id);
+        // const user = await data.get();
+        // const userData = await user.data();
+        // if (user.data() === undefined) {
+        //     errors.push({ msg: "User data not found...!!" });
+        //     return res.status(403).json({
+        //         errors
+        //     })
+        // }
+        await data.update({ is_deleted: true });
+        return res.status(200).json("User deleted...")
+    } catch (error) {
+        const errors = [];
+        errors.push({ msg: error.message });
+        return res.status(400).json(error);
+    }
+}

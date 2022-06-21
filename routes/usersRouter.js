@@ -2,7 +2,10 @@ var express = require('express');
 var userRouter = express.Router();
 const {
   newUser,
-  listUsers
+  listUsers,
+  userDetails,
+  updateUserDetails,
+  userRemove
 } = require('../controllers/Users/user');
 
 
@@ -12,6 +15,9 @@ const {
 
 userRouter.post('/create', newUser);
 userRouter.get('/list', listUsers);
+userRouter.get('/:user_id/details',userDetails)
+userRouter.put('/:user_id/update',updateUserDetails)
+userRouter.delete('/:user_id/delete',userRemove)
 
 
 
