@@ -3,9 +3,7 @@ const isEmpty = (string) => {
     if (string.trim() === "") {
       return true;
     }
-    {
-      return false;
-    }
+    return false;
   };
   
   // for checking input value is numeric or not
@@ -21,29 +19,29 @@ const isEmpty = (string) => {
   // Validating Admin data
   exports.validateUserData = (data) => {
     let errors = [];
-    if (isEmpty(data.user_firstname)) {
+    if (isEmpty(data.firstName)) {
       errors.push({ msg: "First name is required" });
     }
-    if (isEmpty(data.user_lastname)) {
+    if (isEmpty(data.lastName)) {
       errors.push({ msg: "Last name is required" });
     }
-    if (isEmpty(data.user_phone_number)) {
+    if (isEmpty(data.phoneNumber)) {
       errors.push({ msg: "Phone is required" });
     }
-    if (isEmpty(data.user_email)) {
+    if (isEmpty(data.email)) {
       errors.push({ msg: "Email is required" });
     }
-    if (isEmpty(data.user_password)) {
+    if (isEmpty(data.password)) {
       errors.push({ msg: "Password is required" });
     }
   
-    if (data.user_phone_number.length !== 10) {
+    if (data.phoneNumber.length !== 10) {
       errors.push({ msg: "Phone number should be exact 10 digits" });
     }
-    if (data.user_password.length < 6) {
+    if (data.password.length < 6) {
       errors.push({ msg: "The password should be at least 6 character long" });
     }
-    if (!isNumeric(data.user_phone_number)) {
+    if (!isNumeric(data.phoneNumber)) {
       errors.push({ msg: "Phone number should be numbers only." });
     }
   
