@@ -15,7 +15,7 @@ exports.newUser = async (req, res) => {
                 user_firstname: data.firstName,
                 user_lastname: data.lastName,
                 user_type: "member",
-                user_havebook:[],
+                user_havebook: [],
                 user_phone_number: data.phoneNumber,
                 user_email: data.email,
                 user_password: data.password,
@@ -126,6 +126,35 @@ exports.userRemove = async (req, res) => {
         // }
         await data.update({ is_deleted: true });
         return res.status(200).json("User deleted...")
+    } catch (error) {
+        const errors = [];
+        errors.push({ msg: error.message });
+        return res.status(400).json(error);
+    }
+}
+
+exports.issuesBook = async (req, res) => {
+    const uid = req.params.user_id;
+    const bid = req.params.book_id;
+    try {
+        const data = await db.collection("books").doc(bid);
+        await data.update({ book_available: false });
+        const book = await data.get();
+        const bookData = book.data();
+        const bookAdd = {
+            book_id: bid,
+            book_name: bookData.book_name
+        }
+        const userData = await db.collection("users").doc(uid);
+        const ud = await userData.get();
+        const updatedData = ud.data();
+        // console.log(updatedData.user_havebook,"get all data")
+        const ub = updatedData.user_havebook
+        ub.push(bookAdd)
+        await userData.update({
+                user_havebook:ub
+            });
+        return res.status(200).json({ bookData: bookData, userData:updatedData })
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.message });

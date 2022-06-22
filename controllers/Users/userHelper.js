@@ -16,7 +16,7 @@ const isEmpty = (string) => {
     }
   };
   
-  // Validating Admin data
+  // Validating User data
   exports.validateUserData = (data) => {
     let errors = [];
     if (isEmpty(data.firstName)) {
