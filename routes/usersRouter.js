@@ -5,7 +5,8 @@ const {
   listUsers,
   userDetails,
   updateUserDetails,
-  userRemove
+  userRemove,
+  issuesBook
 } = require('../controllers/Users/user');
 
 
@@ -15,10 +16,10 @@ const {
 
 userRouter.post('/create', newUser);
 userRouter.get('/list', listUsers);
-userRouter.get('/:user_id/details',userDetails)
-userRouter.put('/:user_id/update',updateUserDetails)
-userRouter.delete('/:user_id/delete',userRemove)
-
+userRouter.get('/:user_id/details',userDetails);
+userRouter.put('/:user_id/update',updateUserDetails);
+userRouter.delete('/:user_id/delete',userRemove);
+userRouter.put('/:user_id/books/:book_id/issues',issuesBook);
 
 
 module.exports = userRouter;
