@@ -42,7 +42,7 @@ exports.listBooks = async (req, res) => {
         const books = [];
         const data = await db.collection("books").orderBy('created_at', 'desc').get();
         data.forEach((doc) => {
-            if (doc.data().is_deleted === false) {
+            if (doc.data().is_deleted === false && doc.data().book_available === true) {
                 const book = { id: doc.id, bookData: doc.data() };
                 books.push(book);
             }
