@@ -21,6 +21,7 @@ exports.newUser = async (req, res) => {
                 user_password: data.password,
                 user_profile: data.url,
                 is_deleted: false,
+                user_deposit:data?.deposit || 2000,
                 created_at: new Date(),
             };
             const newUser = await firebaseSecondaryApp.auth().createUserWithEmailAndPassword(userData.user_email, userData.user_password);
@@ -116,14 +117,6 @@ exports.userRemove = async (req, res) => {
     try {
         const id = req.params.user_id;
         const data = await db.collection("users").doc(id);
-        // const user = await data.get();
-        // const userData = await user.data();
-        // if (user.data() === undefined) {
-        //     errors.push({ msg: "User data not found...!!" });
-        //     return res.status(403).json({
-        //         errors
-        //     })
-        // }
         await data.update({ is_deleted: true });
         return res.status(200).json("User deleted...")
     } catch (error) {
