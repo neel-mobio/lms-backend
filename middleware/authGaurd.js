@@ -14,5 +14,4 @@ exports.isAuthenticated = (req, res, next) => {
 
   // res.render("Pages/pages-unauthorized");
   //   console.log("You are not authenticated...!!");
-  // res.send("You are not authenticated...!!");
 };
