@@ -1,4 +1,4 @@
-const { db, firebaseSecondaryApp } = require("../../config/admin");
+const { db } = require("../../config/admin");
 const { validateBookData } = require('./bookHelper');
 
 exports.newBook = async (req, res) => {

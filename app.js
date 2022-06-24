@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', router);
 app.use('/users', UsersRouter);
-app.use('/books',BookRouter)
+app.use('/books',BookRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
