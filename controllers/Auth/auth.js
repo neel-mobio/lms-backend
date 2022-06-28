@@ -21,7 +21,13 @@ exports.signIn = async (req, res) => {
     const usersData = await db.collection("users").where("user_type", "==", "admin").get();
     usersData.forEach((doc) => {
       if (doc.data().user_email == user.email) {
+        // console.log(doc.data().user_type,"////////")
+        const userType = doc.data().user_type
         userEmail = doc.data().user_email;
+        res.cookie('userType', userType, {
+          maxAge: 24 * 60 * 60 * 1000,
+          httpOnly: true,
+        });
       }
       console.log(userEmail, "mail")
     });
@@ -62,6 +68,7 @@ exports.signOut = async (req, res) => {
   try {
     await firebaseSecondaryApp.auth().signOut();
     res.clearCookie('_userid');
+    res.clearCookie('userType');
     return res.status(200).json("logout Successfull...")
   } catch (error) {
     console.log(error);
