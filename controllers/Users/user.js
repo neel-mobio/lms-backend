@@ -14,14 +14,17 @@ exports.newUser = async (req, res) => {
             const userData = {
                 user_firstname: data.firstName,
                 user_lastname: data.lastName,
-                user_type: "member",
+                user_type: data?.user_type || "member",
+                member_code:data.member_code,
+                library:data.library,
+                user_status:true,
                 user_havebook: [],
                 user_phone_number: data.phoneNumber,
                 user_email: data.email,
                 user_password: data.password,
                 user_profile: data.url,
                 is_deleted: false,
-                user_deposit:data?.deposit || 2000,
+                // user_deposit: data?.deposit || 2000,
                 created_at: new Date(),
             };
             const newUser = await firebaseSecondaryApp.auth().createUserWithEmailAndPassword(userData.user_email, userData.user_password);
@@ -134,9 +137,13 @@ exports.issuesBook = async (req, res) => {
         await data.update({ book_available: false });
         const book = await data.get();
         const bookData = book.data();
+        let x = new Date();
+        x.setDate(new Date().getDate() + 10);
         const bookAdd = {
             book_id: bid,
-            book_name: bookData.book_name
+            book_name: bookData.book_name,
+            book_givendate: new Date(),
+            book_recevieddate: x
         }
         const userData = await db.collection("users").doc(uid);
         const ud = await userData.get();
@@ -145,9 +152,41 @@ exports.issuesBook = async (req, res) => {
         const ub = updatedData.user_havebook
         ub.push(bookAdd)
         await userData.update({
-                user_havebook:ub
-            });
-        return res.status(200).json({ bookData: bookData, userData:updatedData })
+            user_havebook: ub
+        });
+        return res.status(200).json({ bookData: bookData, userData: updatedData })
+    } catch (error) {
+        const errors = [];
+        errors.push({ msg: error.message });
+        return res.status(400).json(error);
+    }
+}
+
+exports.deliverBook = async (req, res) => {
+    const uid = req.params.user_id;
+    const bid = req.params.book_id;
+    try {
+        const data = await db.collection("books").doc(bid);
+        await data.update({ book_available: true });
+        const book = await data.get();
+        const bookData = book.data();
+        const userData = await db.collection("users").doc(uid);
+        const ud = await userData.get();
+        const updatedData = ud.data();
+        const ub = updatedData.user_havebook
+        // await userData.update({
+        //     "user_havebook": db.FieldValue.arrayRemove({"book_id": bid , "book_givendate":bookData.book_givendate , "book_name":bookData.book_name, "book_recevieddate":bookData.book_recevieddate})
+        // });
+        let remainingBook = [];
+        ub.forEach((doc)=>{
+            if(doc.book_id === bid){
+                remainingBook.push(doc)
+            }
+        })
+        await userData.update({
+            user_havebook:remainingBook
+        })
+        return res.status(200).json({ bookData: bookData, userData:userData })
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.message });
