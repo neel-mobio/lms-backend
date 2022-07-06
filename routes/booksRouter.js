@@ -14,6 +14,7 @@ bookRouter.get('/list', listBooks);
 bookRouter.get('/:book_id/details',bookDetails);
 bookRouter.put('/:book_id/update',updateBookDetails);
 bookRouter.delete('/:book_id/delete',bookRemove);
+bookRouter.get('/books-circulation',)
 
 
 module.exports = bookRouter;

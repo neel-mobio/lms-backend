@@ -22,11 +22,11 @@ exports.newBook = async (req, res) => {
                 cover_page: data.coverPage,
                 language: data.language,
                 awards: data.awards,
-                book_price:data.price,
-                library_name:data.library,
-                no_of_book:data.numberOfBook,
-                book_format:data.format,
-                book_edition:data.edition,
+                book_price: data.price,
+                library_name: data.library,
+                no_of_book: data.numberOfBook,
+                book_format: data.format,
+                book_edition: data.edition,
                 // characters:data,
                 category: data.category,
                 created_at: new Date(),
@@ -124,5 +124,22 @@ exports.bookRemove = async (req, res) => {
         const errors = [];
         errors.push({ msg: error.message });
         return res.status(400).json(error);
+    }
+}
+
+exports.bookCirculation = async (req, res) => {
+    try {
+        const books = [];
+        const data = await db.collection("book_circulation").get();
+        // data.forEach((doc) => {
+        //     // if (doc.data().is_deleted === false && doc.data().book_available === true) {
+        //         const book = { id: doc.id, bookData: doc.data() };
+        //         books.push(book);
+        //     // }
+        // });
+        return res.status(200).json({ books: books })
+
+    } catch (error) {
+        return res.status(400).json({ error: "Something want to wrong..." })
     }
 }
