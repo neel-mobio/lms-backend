@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const db = require("../../models/index");
 const Users = db.Users;
+const Books = db.Books;
 
 
 exports.newUser = (req, res, next) => {
@@ -141,7 +142,7 @@ exports.updateUserDetails = async (req, res) => {
                 errors
             });
         }
-        const userData = await Users.findByIdAndUpdate(req.params.user_id,
+        await Users.findByIdAndUpdate(id,
             {
                 $set: {
                     user_firstname: req.body.firstName,
@@ -154,7 +155,12 @@ exports.updateUserDetails = async (req, res) => {
                 }
             },
         )
-        return res.status(200).json({ userData: userData })
+        const updatedUserData = await Users.find({
+            $and: [
+                { _id: id }
+            ],
+        })
+        return res.status(200).json({ userData: updatedUserData })
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.code });
@@ -165,8 +171,13 @@ exports.updateUserDetails = async (req, res) => {
 exports.userRemove = async (req, res) => {
     try {
         const id = req.params.user_id;
-        await Users.findByIdAndRemove({ _id: req.params.user_id });
-        return res.status(200).json("User deleted...")
+        const userRemoved = await Users.findByIdAndRemove({ _id: id });
+        if (userRemoved) {
+            return res.status(200).json("User deleted...");
+        } else {
+            return res.status(400).json("User is not available")
+        }
+        // return res.status(200).json("User deleted...")
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.message });
@@ -178,37 +189,40 @@ exports.issuesBook = async (req, res) => {
     const uid = req.params.user_id;
     const bid = req.params.book_id;
     try {
-        const data = await db.collection("books").doc(bid);
-        await data.update({ book_available: false });
-        const book = await data.get();
-        const bookData = book.data();
+        const updateBook = await Books.findByIdAndUpdate(bid,
+            {
+                $set: {
+                    book_available: false
+                }
+            },
+        )
         let x = new Date();
         x.setDate(new Date().getDate() + 10);
         const bookAdd = {
             book_id: bid,
-            book_name: bookData.book_name,
+            book_name: updateBook.book_name,
             book_issuedate: new Date(),
             book_return_due_date: x,
             book_status: "Issue"
         }
-        // const userData = await db.collection("users").doc(uid);
-        // const ud = await userData.get();
-        // const updatedData = ud.data();
-        const userData = await Users.findByIdAndUpdate(req.params.user_id,
+        await Users.findByIdAndUpdate(uid,
             {
-                $set: {
-                    user_havebook:bookAdd
+                $push: {
+                    user_havebook: bookAdd
                 }
             },
         )
-        // console.log(updatedData.user_havebook,"get all data")
-        // const ub = updatedData.user_havebook
-        // ub.push(bookAdd)
-        // await userData.update({
-        //     user_havebook: ub
-        // });
-        console.log(userData,"data")
-        return res.status(200).json({ bookData: bookData, userData: userData })
+        const updatedBookData = await Books.find({
+            $and: [
+                { _id: bid }
+            ],
+        })
+        const updatedUserData = await Users.find({
+            $and: [
+                { _id: uid }
+            ],
+        })
+        return res.status(200).json({ bookData: updatedBookData, userData: updatedUserData })
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.message });
@@ -220,38 +234,48 @@ exports.deliverBook = async (req, res) => {
     const uid = req.params.user_id;
     const bid = req.params.book_id;
     try {
-        const data = await db.collection("books").doc(bid);
-        await data.update({ book_available: true });
-        const book = await data.get();
-        const bookData = book.data();
-        const userData = await db.collection("users").doc(uid);
-        const ud = await userData.get();
-        const updatedData = ud.data();
-        const ub = updatedData.user_havebook
-        // await userData.update({
-        //     "user_havebook": db.FieldValue.arrayRemove({"book_id": bid , "book_givendate":bookData.book_givendate , "book_name":bookData.book_name, "book_recevieddate":bookData.book_recevieddate})
-        // });
+        await Books.findByIdAndUpdate(bid,
+            {
+                $set: {
+                    book_available: true
+                }
+            },
+        )
+        const updatedUserData = await Users.find({ _id: uid })
         let remainingBook = [];
-        ub.forEach((doc) => {
-            if (doc.book_id === bid) {
-                remainingBook.push(
-                    {
-                        book_issuedate: doc.book_issuedate,
-                        book_return_due_date: doc.book_return_due_date,
-                        book_returndate: new Date(),
-                        book_name: doc.book_name,
-                        book_id: doc.book_id,
-                        book_status: doc.book_status = "Returned"
-                    }
-                )
-            } else {
-                remainingBook.push(doc);
-            }
+        updatedUserData.forEach((doc) => {
+            doc.user_havebook.forEach((data) => {
+                if (data.book_id === bid) {
+                    remainingBook.push(
+                        {
+                            book_issuedate: data.book_issuedate,
+                            book_return_due_date: data.book_return_due_date,
+                            book_returndate: new Date(),
+                            book_name: data.book_name,
+                            book_id: data.book_id,
+                            book_status: data.book_status = "Returned"
+                        }
+                    )
+                } else {
+                    remainingBook.push(data)
+                }
+            })
         })
-        await userData.update({
-            user_havebook: remainingBook
+        console.log(remainingBook, "finally")
+        await Users.findByIdAndUpdate(uid,
+            {
+                $push: {
+                    user_havebook: remainingBook
+                }
+            },
+        )
+        const updatedBookData = await Books.find({
+            $and: [
+                { _id: bid }
+            ],
         })
-        return res.status(200).json({ bookData: bookData, userData: updatedData })
+        const updateUserData = await Users.findById({ _id: uid })
+        return res.status(200).json({ bookData: updatedBookData, userData: updatedUserData })
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.message });
