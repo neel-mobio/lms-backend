@@ -8,7 +8,16 @@ const userSchema = new mongoose.Schema({
     member_code: String,
     library: String,
     user_status: Boolean,
-    user_havebook: { type : Array , "default" : [] },
+    user_havebook: [
+        {
+            book_id: String,
+            book_name: String,
+            book_issuedate: Date,
+            book_return_due_date: Date,
+            book_returndate: Date,
+            book_status: String
+        }
+    ],
     user_phone_number: Number,
     user_email: {
         type: String,
