@@ -1,5 +1,8 @@
-const { db } = require("../../config/admin");
 const { validateBookData } = require('./bookHelper');
+const bcrypt = require("bcrypt");
+const db = require("../../models/index");
+const mongoose = require("mongoose");
+const Books = db.Books;
 
 exports.newBook = async (req, res) => {
     const data = req.body
@@ -10,9 +13,8 @@ exports.newBook = async (req, res) => {
                 errors,
             });
         } else {
-            console.log("call else")
-
-            const bookData = {
+            const book = new Books({
+                _id: new mongoose.Types.ObjectId(),
                 book_name: data.name,
                 book_auther: data.auther,
                 book_available: true,
@@ -31,8 +33,36 @@ exports.newBook = async (req, res) => {
                 category: data.category,
                 created_at: new Date(),
                 is_deleted: false
-            }
-            await db.collection("books").doc().set(bookData);
+                // user_deposit: data?.deposit || 2000,
+                // created_at: new Date(),
+            });
+            book
+                .save()
+                .then(async (result) => {
+                    await result
+                        .save()
+                    // .then((result1) => {
+                    //     console.log(`Book created ${result}`)
+                    //     console.log(`Book created1111 ${result1}`)
+                    //     res.status(201).json({
+                    //         bookDetails: {
+                    //             result1
+                    //         },
+                    //     })
+                    // })
+                    // .catch((err) => {
+                    //     console.log(err)
+                    //     res.status(400).json({
+                    //         message: err.toString()
+                    //     })
+                    // });
+                })
+                .catch((err) => {
+                    console.log(err)
+                    res.status(500).json({
+                        message: err.toString()
+                    })
+                });
             return res.status(200).json({
                 message: "Book is created...!!",
             });
@@ -44,14 +74,11 @@ exports.newBook = async (req, res) => {
 
 exports.listBooks = async (req, res) => {
     try {
-        const books = [];
-        const data = await db.collection("books").orderBy('created_at', 'desc').get();
-        data.forEach((doc) => {
-            if (doc.data().is_deleted === false && doc.data().book_available === true) {
-                const book = { id: doc.id, bookData: doc.data() };
-                books.push(book);
-            }
-        });
+        const books = await Books.find({
+            $and: [
+                { is_deleted: false }
+            ],
+        })
         return res.status(200).json({ books: books })
 
     } catch (error) {
@@ -63,14 +90,17 @@ exports.bookDetails = async (req, res) => {
     try {
         const errors = [];
         const id = req.params.book_id;
-        const data = await db.collection("books").doc(id).get();
-        if (data.data() === undefined) {
+        const bookData = await Books.find({
+            $and: [
+                { _id: id }
+            ],
+        });
+        if (bookData === undefined) {
             errors.push({ msg: "Book data not found...!!" });
             return res.status(403).json({
                 errors
             })
         }
-        const bookData = data.data();
         return res.status(200).json({ bookData: bookData });
     } catch (error) {
         const errors = [];
@@ -89,23 +119,28 @@ exports.updateBookDetails = async (req, res) => {
                 errors
             });
         }
-        const bookData = {
-            book_name: data.name,
-            book_auther: data.auther,
-            published_date: data.publishedDate,
-            book_discription: data.discription,
-            book_rating: data.rating,
-            cover_page: data.coverPage,
-            language: data.language,
-            awards: data.awards,
-            // characters:data,
-            category: data.category,
-        }
-        const updateBook = await db.collection("books").doc(id);
-        await updateBook.update(bookData);
-        const ub = await updateBook.get();
-        const updateData = ub.data();
-        return res.status(200).json({ bookData: updateData })
+        await Books.findByIdAndUpdate(id,
+            {
+                $set: {
+                    book_name: data.name,
+                    book_auther: data.auther,
+                    published_date: data.publishedDate,
+                    book_discription: data.discription,
+                    book_rating: data.rating,
+                    cover_page: data.coverPage,
+                    language: data.language,
+                    awards: data.awards,
+                    // characters:data,
+                    category: data.category,
+                }
+            },
+        )
+        const updatedBookData = await Books.find({
+            $and: [
+                { _id: id }
+            ],
+        })
+        return res.status(200).json({ bookData: updatedBookData })
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.code });
@@ -117,9 +152,14 @@ exports.updateBookDetails = async (req, res) => {
 exports.bookRemove = async (req, res) => {
     try {
         const id = req.params.book_id;
-        const data = await db.collection("books").doc(id);
-        await data.update({ is_deleted: true });
-        return res.status(200).json("Book deleted...");
+        // const data = await db.collection("books").doc(id);
+        // await data.update({ is_deleted: true });
+        const bookremoved =  await Books.findByIdAndRemove({ _id: id })
+        if(bookremoved){
+            return res.status(200).json("Book deleted...");
+        }else{
+            return res.status(400).json("Book is not available")
+        }
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.message });
