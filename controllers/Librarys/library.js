@@ -87,7 +87,7 @@ exports.updateLibraryDetails = async (req, res) => {
         await updatelibrary.update(libraryData);
         const ul = await updatelibrary.get();
         const updateData = ul.data();
-        return res.status(200).json({ libraryData: updateData })
+        return res.status(201).json({ libraryData: updateData })
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.code });
