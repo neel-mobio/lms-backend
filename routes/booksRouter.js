@@ -5,7 +5,8 @@ const {
     listBooks,
     bookDetails,
     updateBookDetails,
-    bookRemove
+    bookRemove,
+    bookCirculation
 } = require('../controllers/Books/book');
 
 
@@ -14,7 +15,7 @@ bookRouter.get('/list', listBooks);
 bookRouter.get('/:book_id/details',bookDetails);
 bookRouter.put('/:book_id/update',updateBookDetails);
 bookRouter.delete('/:book_id/delete',bookRemove);
-bookRouter.get('/books-circulation',)
+bookRouter.get('/books-circulation',bookCirculation)
 
 
 module.exports = bookRouter;

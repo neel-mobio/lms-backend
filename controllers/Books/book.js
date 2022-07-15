@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const db = require("../../models/index");
 const mongoose = require("mongoose");
 const Books = db.Books;
+const BookCirculations = db.BookCirculations;
 
 exports.newBook = async (req, res) => {
     const data = req.body
@@ -140,7 +141,7 @@ exports.updateBookDetails = async (req, res) => {
                 { _id: id }
             ],
         })
-        return res.status(200).json({ bookData: updatedBookData })
+        return res.status(201).json({ bookData: updatedBookData })
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.code });
@@ -154,10 +155,10 @@ exports.bookRemove = async (req, res) => {
         const id = req.params.book_id;
         // const data = await db.collection("books").doc(id);
         // await data.update({ is_deleted: true });
-        const bookremoved =  await Books.findByIdAndRemove({ _id: id })
-        if(bookremoved){
+        const bookremoved = await Books.findByIdAndRemove({ _id: id })
+        if (bookremoved) {
             return res.status(200).json("Book deleted...");
-        }else{
+        } else {
             return res.status(400).json("Book is not available")
         }
     } catch (error) {
@@ -167,17 +168,10 @@ exports.bookRemove = async (req, res) => {
     }
 }
 
-exports.bookCirculation = async (req, res) => {
+exports.bookCirculation = async (req, res) => {    
     try {
-        const books = [];
-        const data = await db.collection("book_circulation").get();
-        // data.forEach((doc) => {
-        //     // if (doc.data().is_deleted === false && doc.data().book_available === true) {
-        //         const book = { id: doc.id, bookData: doc.data() };
-        //         books.push(book);
-        //     // }
-        // });
-        return res.status(200).json({ books: books })
+        const bookCirculation = await BookCirculations.find();
+        return res.status(200).json({ bookCirculation: bookCirculation })
 
     } catch (error) {
         return res.status(400).json({ error: "Something want to wrong..." })
