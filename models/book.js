@@ -18,7 +18,8 @@ const bookSchema = new mongoose.Schema({
     // characters:data,
     category: String,
     // created_at: new Date(),
-    is_deleted: Boolean
+    is_deleted: Boolean,
+    book_code: String,
 },
 {
     timestamps : true

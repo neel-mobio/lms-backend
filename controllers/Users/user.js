@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const db = require("../../models/index");
 const Users = db.Users;
 const Books = db.Books;
+const BookCirculations = db.BookCirculations;
 
 
 exports.newUser = (req, res, next) => {
@@ -160,7 +161,7 @@ exports.updateUserDetails = async (req, res) => {
                 { _id: id }
             ],
         })
-        return res.status(200).json({ userData: updatedUserData })
+        return res.status(201).json({ userData: updatedUserData })
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.code });
@@ -212,16 +213,43 @@ exports.issuesBook = async (req, res) => {
                 }
             },
         )
-        const updatedBookData = await Books.find({
-            $and: [
-                { _id: bid }
-            ],
-        })
-        const updatedUserData = await Users.find({
-            $and: [
-                { _id: uid }
-            ],
-        })
+        const updatedBookData = await Books.findById({ _id: bid });
+        const updatedUserData = await Users.findById({ _id: uid });
+        // console.log(updatedBookData.book_name, "bookdata");
+        // console.log(updatedUserData, "User Data");
+        let bookData = [];
+        updatedUserData.user_havebook.forEach((data) => {
+            // need more validation
+            if (data.book_id === bid) {
+                bookData.push(
+                    {
+                        book_issuedate: data.book_issuedate,
+                        book_return_due_date: data.book_return_due_date,
+                        book_returndate: new Date(),
+                        book_name: data.book_name,
+                        book_id: data.book_id,
+                        book_status: data.book_status = "Issue"
+                    }
+                )
+            }
+        });
+        const bookCirculations = new BookCirculations({
+            book_id: bid,     // need to check
+            book_code: updatedBookData.book_code,
+            book_edition: updatedBookData.book_edition,
+            book_issuer: updatedUserData.user_firstname + " " + updatedUserData.user_lastname,
+            book_language: updatedBookData.language,
+            book_name: updatedBookData.book_name,
+            book_returner: "String",
+            // book_format: updatedBookData,
+            issue_date: bookData[0].book_issuedate,
+            // member: String,
+            return_date: bookData[0].book_returndate,
+            return_due_date: bookData[0].book_return_due_date,
+            status: updatedBookData.book_available,
+        });
+        bookCirculations.save()
+
         return res.status(200).json({ bookData: updatedBookData, userData: updatedUserData })
     } catch (error) {
         const errors = [];
@@ -241,9 +269,9 @@ exports.deliverBook = async (req, res) => {
                 }
             },
         )
-        const updatedUserData = await Users.find({ _id: uid })
+        const userData = await Users.find({ _id: uid })
         let remainingBook = [];
-        updatedUserData.forEach((doc) => {
+        userData.forEach((doc) => {
             doc.user_havebook.forEach((data) => {
                 if (data.book_id === bid) {
                     remainingBook.push(
@@ -264,17 +292,21 @@ exports.deliverBook = async (req, res) => {
         console.log(remainingBook, "finally")
         await Users.findByIdAndUpdate(uid,
             {
-                $push: {
+                $set: {
                     user_havebook: remainingBook
                 }
             },
         )
-        const updatedBookData = await Books.find({
-            $and: [
-                { _id: bid }
-            ],
-        })
-        const updateUserData = await Users.findById({ _id: uid })
+        const updatedBookData = await Books.findById({ _id: bid });
+        const updatedUserData = await Users.findById({ _id: uid });
+
+        const bookCirculationData = await BookCirculations.findOneAndUpdate(
+            { "book_id": bid },
+            { $set: { "status": true } }
+        )
+        console.log(bookCirculationData, "get name");
+
+
         return res.status(200).json({ bookData: updatedBookData, userData: updatedUserData })
     } catch (error) {
         const errors = [];

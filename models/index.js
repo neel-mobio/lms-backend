@@ -8,5 +8,6 @@ db.mongoose = mongoose;
 db.url = dbConfig.url;
 db.Users = require("./user.js");
 db.Books = require("./book");
+db.BookCirculations = require("./bookCirculation");
 
 module.exports = db;
