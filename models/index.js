@@ -10,5 +10,6 @@ db.Users = require("./user.js");
 db.Books = require("./book");
 db.BookCirculations = require("./bookCirculation");
 db.Authors = require("./author");
+db.Writers = require("./writer");
 
 module.exports = db;

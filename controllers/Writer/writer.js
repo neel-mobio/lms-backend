@@ -1,24 +1,25 @@
+const { validateWriterData } = require('./writerHelper');
+const mongoose = require('mongoose');
 const db = require("../../models/index");
-const mongoose = require("mongoose");
-const { validateAuthorData } = require('./authorHelper');
-const Authors = db.Authors;
+const Writers = db.Writers;
 
-exports.newAuthor = async (req, res) => {
+
+exports.newWriter = async (req, res) => {
     const data = req.body;
-    const { valid, errors } = validateAuthorData(data);
+    const { valid, errors } = validateWriterData(data);
     try {
         if (!valid) {
             return res.status(400).json({
                 errors,
             });
         } else {
-            const author = new Authors({
+            const writer = new Writers({
                 _id: new mongoose.Types.ObjectId(),
-                author_firstName: data.firstName,
-                author_lastName: data.lastName,
+                writer_firstName: data.firstName,
+                writer_lastName: data.lastName,
                 description: data.description,
             });
-            author.save()
+            writer.save()
                 .then(async (result) => {
                     await result
                         .save()
@@ -30,7 +31,7 @@ exports.newAuthor = async (req, res) => {
                     })
                 });
             return res.status(201).json({
-                message: "Author is created...!!",
+                message: "Writer is created...!!",
             });
         }
     } catch (error) {
@@ -38,27 +39,27 @@ exports.newAuthor = async (req, res) => {
     }
 };
 
-exports.listAuthor = async (req, res) => {
+exports.listWriter = async (req, res) => {
     try {
-        const authors = await Authors.find()
-        return res.status(200).json({ authors: authors })
+        const writers = await Writers.find()
+        return res.status(200).json({ writers: writers })
     } catch (error) {
         return res.status(400).json({ error: "Something want to wrong..." })
     }
 };
 
-exports.authorDetails = async (req, res) => {
+exports.writerDetails = async (req, res) => {
     try {
         const errors = [];
-        const id = req.params.author_id;
-        const authorData = await Authors.findById(id);
-        if (authorData === undefined) {
-            errors.push({ msg: "Author data not found...!!" });
+        const id = req.params.writer_id;
+        const writerData = await Writers.findById(id);
+        if (writerData === undefined) {
+            errors.push({ msg: "Writer data not found...!!" });
             return res.status(403).json({
                 errors
             })
         }
-        return res.status(200).json({ authorData: authorData });
+        return res.status(200).json({ writerData: writerData });
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.message });
@@ -66,27 +67,27 @@ exports.authorDetails = async (req, res) => {
     }
 };
 
-exports.updateAuthorDetails = async (req, res) => {
+exports.updateWriterDetails = async (req, res) => {
     try {
-        const id = req.params.author_id;
+        const id = req.params.writer_id;
         const data = req.body;
-        const { valid, errors } = validateAuthorData(data);
+        const { valid, errors } = validateWriterData(data);
         if (!valid) {
             return res.status(400).json({
                 errors
             });
         }
-        await Authors.findByIdAndUpdate(id,
+        await Writers.findByIdAndUpdate(id,
             {
                 $set: {
-                    author_firstName: data.firstName,
-                    author_lastName: data.lastName,
+                    writer_firstName: data.firstName,
+                    writer_lastName: data.lastName,
                     description: data.description,
                 }
             },
         )
-        const updatedAuthorData = await Authors.findById(id)
-        return res.status(200).json({ authorData: updatedAuthorData })
+        const updatedWriterData = await Writers.findById(id)
+        return res.status(200).json({ writerData: updatedWriterData })
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.code });
@@ -94,16 +95,15 @@ exports.updateAuthorDetails = async (req, res) => {
     }
 };
 
-exports.authorRemove = async (req, res) => {
+exports.writerRemove = async (req, res) => {
     try {
-        const id = req.params.author_id;
-        const authorRemoved = await Authors.findByIdAndRemove({ _id: id });
-        if (authorRemoved) {
-            return res.status(200).json("Author deleted...");
+        const id = req.params.writer_id;
+        const writerRemoved = await Writers.findByIdAndRemove({ _id: id });
+        if (writerRemoved) {
+            return res.status(200).json("Writer deleted...");
         } else {
-            return res.status(400).json("Author is not available")
+            return res.status(400).json("Writer is not available")
         }
-        // return res.status(200).json("Author deleted...")
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.message });
