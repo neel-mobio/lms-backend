@@ -1,5 +1,5 @@
 const { validateBookData } = require('./bookHelper');
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
 const db = require("../../models/index");
 const mongoose = require("mongoose");
 const Books = db.Books;
@@ -17,7 +17,7 @@ exports.newBook = async (req, res) => {
             const book = new Books({
                 _id: new mongoose.Types.ObjectId(),
                 book_name: data.name,
-                book_auther: data.auther,
+                book_author: data.author,
                 book_available: true,
                 published_date: data.publishedDate,
                 book_discription: data.discription,
@@ -91,11 +91,7 @@ exports.bookDetails = async (req, res) => {
     try {
         const errors = [];
         const id = req.params.book_id;
-        const bookData = await Books.find({
-            $and: [
-                { _id: id }
-            ],
-        });
+        const bookData = await Books.findById(id);
         if (bookData === undefined) {
             errors.push({ msg: "Book data not found...!!" });
             return res.status(403).json({
@@ -124,7 +120,7 @@ exports.updateBookDetails = async (req, res) => {
             {
                 $set: {
                     book_name: data.name,
-                    book_auther: data.auther,
+                    book_author: data.author,
                     published_date: data.publishedDate,
                     book_discription: data.discription,
                     book_rating: data.rating,
@@ -136,11 +132,7 @@ exports.updateBookDetails = async (req, res) => {
                 }
             },
         )
-        const updatedBookData = await Books.find({
-            $and: [
-                { _id: id }
-            ],
-        })
+        const updatedBookData = await Books.findById(id)
         return res.status(201).json({ bookData: updatedBookData })
     } catch (error) {
         const errors = [];
@@ -153,8 +145,6 @@ exports.updateBookDetails = async (req, res) => {
 exports.bookRemove = async (req, res) => {
     try {
         const id = req.params.book_id;
-        // const data = await db.collection("books").doc(id);
-        // await data.update({ is_deleted: true });
         const bookremoved = await Books.findByIdAndRemove({ _id: id })
         if (bookremoved) {
             return res.status(200).json("Book deleted...");
@@ -168,7 +158,7 @@ exports.bookRemove = async (req, res) => {
     }
 }
 
-exports.bookCirculation = async (req, res) => {    
+exports.bookCirculation = async (req, res) => {
     try {
         const bookCirculation = await BookCirculations.find();
         return res.status(200).json({ bookCirculation: bookCirculation })

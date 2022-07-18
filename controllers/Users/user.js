@@ -46,34 +46,34 @@ exports.newUser = (req, res, next) => {
                             .then(async (result) => {
                                 await result
                                     .save()
-                                    .then((result1) => {
-                                        console.log(`User created ${result}`)
-                                        console.log(`User created1111 ${result1}`)
-                                        res.status(201).json({
-                                            userDetails: {
-                                                result1
-                                                // _id: new mongoose.Types.ObjectId(),
-                                                // user_firstname: result.user_firstname,
-                                                // user_lastname: result.user_lastname,
-                                                // user_type: result?.user_type || "member",
-                                                // member_code: result.member_code,
-                                                // library: result.library,
-                                                // user_status: true,
-                                                // user_havebook: [],
-                                                // user_phone_number: result.user_phone_number,
-                                                // user_email: result.user_email,
-                                                // user_password: result.user_password,
-                                                // user_profile: result.user_profile,
-                                                // is_deleted: false,
-                                            },
-                                        })
-                                    })
-                                    .catch((err) => {
-                                        console.log(err)
-                                        res.status(400).json({
-                                            message: err.toString()
-                                        })
-                                    });
+                                    // .then((result1) => {
+                                    //     console.log(`User created ${result}`)
+                                    //     console.log(`User created1111 ${result1}`)
+                                    //     res.status(201).json({
+                                    //         userDetails: {
+                                    //             result1
+                                    //             // _id: new mongoose.Types.ObjectId(),
+                                    //             // user_firstname: result.user_firstname,
+                                    //             // user_lastname: result.user_lastname,
+                                    //             // user_type: result?.user_type || "member",
+                                    //             // member_code: result.member_code,
+                                    //             // library: result.library,
+                                    //             // user_status: true,
+                                    //             // user_havebook: [],
+                                    //             // user_phone_number: result.user_phone_number,
+                                    //             // user_email: result.user_email,
+                                    //             // user_password: result.user_password,
+                                    //             // user_profile: result.user_profile,
+                                    //             // is_deleted: false,
+                                    //         },
+                                    //     })
+                                    // })
+                                    // .catch((err) => {
+                                    //     console.log(err)
+                                    //     res.status(400).json({
+                                    //         message: err.toString()
+                                    //     })
+                                    // });
                             })
                             .catch((err) => {
                                 console.log(err)
@@ -91,19 +91,15 @@ exports.newUser = (req, res, next) => {
                 message: err.toString()
             })
         });
-}
+};
 
 exports.listUsers = async (req, res) => {
     try {
-        const users = [];
-        await Users.find({
+        const users = await Users.find({
             $and: [
                 { is_deleted: false }
             ],
         })
-            .then(items =>
-                users.push(items)
-            );
         return res.status(200).json({ users: users })
     } catch (error) {
         return res.status(400).json({ error: "Something want to wrong..." })
@@ -114,11 +110,7 @@ exports.userDetails = async (req, res) => {
     try {
         const errors = [];
         const id = req.params.user_id;
-        const userData = await Users.find({
-            $and: [
-                { _id: req.params.user_id }
-            ],
-        })
+        const userData = await Users.findById(id)
         if (userData === undefined) {
             errors.push({ msg: "User data not found...!!" });
             return res.status(403).json({
@@ -156,11 +148,7 @@ exports.updateUserDetails = async (req, res) => {
                 }
             },
         )
-        const updatedUserData = await Users.find({
-            $and: [
-                { _id: id }
-            ],
-        })
+        const updatedUserData = await Users.findById(id)
         return res.status(201).json({ userData: updatedUserData })
     } catch (error) {
         const errors = [];
@@ -184,7 +172,7 @@ exports.userRemove = async (req, res) => {
         errors.push({ msg: error.message });
         return res.status(400).json(error);
     }
-}
+};
 
 exports.issuesBook = async (req, res) => {
     const uid = req.params.user_id;
@@ -256,7 +244,7 @@ exports.issuesBook = async (req, res) => {
         errors.push({ msg: error.message });
         return res.status(400).json(error);
     }
-}
+};
 
 exports.deliverBook = async (req, res) => {
     const uid = req.params.user_id;
@@ -269,7 +257,7 @@ exports.deliverBook = async (req, res) => {
                 }
             },
         )
-        const userData = await Users.find({ _id: uid })
+        const userData = await Users.findById({ _id: uid })
         let remainingBook = [];
         userData.forEach((doc) => {
             doc.user_havebook.forEach((data) => {
@@ -313,4 +301,4 @@ exports.deliverBook = async (req, res) => {
         errors.push({ msg: error.message });
         return res.status(400).json(error);
     }
-}
+};
