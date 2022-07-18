@@ -64,7 +64,7 @@ exports.newBook = async (req, res) => {
                         message: err.toString()
                     })
                 });
-            return res.status(200).json({
+            return res.status(201).json({
                 message: "Book is created...!!",
             });
         }
@@ -133,7 +133,7 @@ exports.updateBookDetails = async (req, res) => {
             },
         )
         const updatedBookData = await Books.findById(id)
-        return res.status(201).json({ bookData: updatedBookData })
+        return res.status(200).json({ bookData: updatedBookData })
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.code });

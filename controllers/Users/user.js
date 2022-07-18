@@ -149,7 +149,7 @@ exports.updateUserDetails = async (req, res) => {
             },
         )
         const updatedUserData = await Users.findById(id)
-        return res.status(201).json({ userData: updatedUserData })
+        return res.status(200).json({ userData: updatedUserData })
     } catch (error) {
         const errors = [];
         errors.push({ msg: error.code });
