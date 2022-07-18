@@ -9,5 +9,6 @@ db.url = dbConfig.url;
 db.Users = require("./user.js");
 db.Books = require("./book");
 db.BookCirculations = require("./bookCirculation");
+db.Authors = require("./author");
 
 module.exports = db;

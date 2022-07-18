@@ -21,8 +21,8 @@ exports.validateBookData = (data) => {
     if (isEmpty(data.name)) {
         errors.push({ msg: "Book name is required" });
     }
-    if (isEmpty(data.auther)) {
-        errors.push({ msg: "Auther name is required" });
+    if (isEmpty(data.author)) {
+        errors.push({ msg: "Author name is required" });
     }
     if (isEmpty(data.discription)) {
         errors.push({ msg: "Discription is required" });
