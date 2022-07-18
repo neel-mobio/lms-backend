@@ -10,6 +10,7 @@ var UsersRouter             = require('./routes/usersRouter');
 var BookRouter              = require('./routes/booksRouter');
 var LibraryRouter           = require('./routes/libraryRouter');
 var AuthorRouter            = require('./routes/authorRouter');
+var WriterRouter            = require('./routes/writersRouter');
 var app                     = express();
 
 // view engine setup
@@ -27,6 +28,7 @@ app.use('/users', UsersRouter);
 app.use('/books',BookRouter);
 app.use('/librarys',LibraryRouter);
 app.use('/author',AuthorRouter);
+app.use('/writer',WriterRouter);
 
 const db = require("./models/index");
 // const dbURI = "mongodb://localhost:27017"
