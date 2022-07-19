@@ -14,6 +14,7 @@ var WriterRouter            = require('./routes/writersRouter');
 var PublisherRouter         = require('./routes/publisherRouter');
 var EditorRouter            = require('./routes/editorRouter');
 var BookTypeRouter          = require('./routes/bookTypesRouter');
+var BookLanguages           = require('./routes/languageRouter');
 var app                     = express();
 
 // view engine setup
@@ -35,6 +36,7 @@ app.use('/writer',WriterRouter);
 app.use('/publisher',PublisherRouter);
 app.use('/editor',EditorRouter);
 app.use('/booktype',BookTypeRouter);
+app.use('/booklanguage',BookLanguages);
 
 const db = require("./models/index");
 // const dbURI = "mongodb://localhost:27017"
