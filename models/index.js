@@ -12,5 +12,6 @@ db.BookCirculations = require("./bookCirculation");
 db.Authors = require("./author");
 db.Writers = require("./writer");
 db.Publishers = require("./publisher");
+db.Editors = require('./editors');
 
 module.exports = db;
