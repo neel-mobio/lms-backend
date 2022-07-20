@@ -36,7 +36,7 @@ app.use('/writer',WriterRouter);
 app.use('/publisher',PublisherRouter);
 app.use('/editor',EditorRouter);
 app.use('/booktype',BookTypeRouter);
-app.use('/booklanguage',BookLanguages);
+app.use('/booklanguage',BookLanguages)
 
 const db = require("./models/index");
 // const dbURI = "mongodb://localhost:27017"
