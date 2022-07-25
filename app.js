@@ -32,16 +32,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', router);
 app.use('/auth',auth);
-app.use('/users',verifyToken, UsersRouter);
-app.use('/books',verifyToken,BookRouter);
-// app.use('/librarys',verifyToken, LibraryRouter);
-app.use('/author',verifyToken, AuthorRouter);
-app.use('/writer',verifyToken, WriterRouter);
-app.use('/publisher',verifyToken, PublisherRouter);
-app.use('/editor',verifyToken, EditorRouter);
-app.use('/booktype',verifyToken, BookTypeRouter);
-app.use('/booklanguage',verifyToken, BookLanguages);
-app.use('/dashboard',verifyToken, DashboardRouter);
+app.use('/users', UsersRouter);
+app.use('/books',BookRouter);
+// app.use('/librarys', LibraryRouter);
+app.use('/author', AuthorRouter);
+app.use('/writer', WriterRouter);
+app.use('/publisher', PublisherRouter);
+app.use('/editor', EditorRouter);
+app.use('/booktype', BookTypeRouter);
+app.use('/booklanguage', BookLanguages);
+app.use('/dashboard', DashboardRouter);
 
 const db = require("./models/index");
 // const dbURI = "mongodb://localhost:27017"
