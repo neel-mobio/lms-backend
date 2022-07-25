@@ -43,7 +43,7 @@ exports.listAuthor = async (req, res) => {
         const authors = await Authors.find()
         return res.status(200).json({ authors: authors })
     } catch (error) {
-        return res.status(400).json({ error: "Something want to wrong..." })
+        return res.status(400).json({ error: "Something went to wrong..." })
     }
 };
 

@@ -42,7 +42,7 @@ exports.listBookLanguage = async (req, res) => {
         const bookLanguages = await BookLanguages.find()
         return res.status(200).json({ bookLanguages: bookLanguages })
     } catch (error) {
-        return res.status(400).json({ error: "Something want to wrong..." })
+        return res.status(400).json({ error: "Something went to wrong..." })
     }
 };
 

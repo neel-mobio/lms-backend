@@ -43,7 +43,7 @@ exports.listLibrarys = async (req, res) => {
         return res.status(200).json({ librarys: librarys })
 
     } catch (error) {
-        return res.status(400).json({ error: "Something want to wrong..." })
+        return res.status(400).json({ error: "Something went to wrong..." })
     }
 }
 
