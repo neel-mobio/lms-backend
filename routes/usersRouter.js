@@ -9,7 +9,7 @@ const {
   issuesBook,
   deliverBook
 } = require('../controllers/Users/user');
-const {isAuthenticated} = require('../middleware/authGaurd')
+
 
 // userRouter.get('/', function (req, res, next) {
 //   return res.status(200).json({ message: "User List" })

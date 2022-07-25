@@ -1,7 +1,7 @@
 var express = require('express');
-const { signIn,
-        signOut
-} = require('../controllers/Auth/auth');
+// const { signIn,
+//         signOut
+// } = require('../controllers/Auth/auth');
 var router = express.Router();
 
 /* GET home page. */
@@ -12,7 +12,7 @@ router.get('/', function (req, res, next) {
   return res.status(200).json({ data: data })
 });
 
-router.post('/', signIn);
-router.post('/logout',signOut);
+// router.post('/', signIn);
+// router.post('/logout',signOut);
 
 module.exports = router;

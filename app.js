@@ -4,11 +4,12 @@ const mongoose              = require('mongoose');
 var path                    = require('path');
 var cookieParser            = require('cookie-parser');
 var logger                  = require('morgan');
-
+require("dotenv").config();
 var router                  = require('./routes/router');
+var auth              = require('./routes/authRouter');
 var UsersRouter             = require('./routes/usersRouter');
 var BookRouter              = require('./routes/booksRouter');
-var LibraryRouter           = require('./routes/libraryRouter');
+// var LibraryRouter           = require('./routes/libraryRouter');
 var AuthorRouter            = require('./routes/authorRouter');
 var WriterRouter            = require('./routes/writersRouter');
 var PublisherRouter         = require('./routes/publisherRouter');
@@ -16,6 +17,7 @@ var EditorRouter            = require('./routes/editorRouter');
 var BookTypeRouter          = require('./routes/bookTypesRouter');
 var BookLanguages           = require('./routes/languageRouter');
 var DashboardRouter         = require('./routes/dashboardRouter');
+const verifyToken           = require("./routes/validate-token");
 var app                     = express();
 
 // view engine setup
@@ -29,21 +31,22 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', router);
-app.use('/users', UsersRouter);
-app.use('/books',BookRouter);
-app.use('/librarys',LibraryRouter);
-app.use('/author',AuthorRouter);
-app.use('/writer',WriterRouter);
-app.use('/publisher',PublisherRouter);
-app.use('/editor',EditorRouter);
-app.use('/booktype',BookTypeRouter);
-app.use('/booklanguage',BookLanguages);
-app.use('/dashboard',DashboardRouter);
+app.use('/auth',auth);
+app.use('/users',verifyToken, UsersRouter);
+app.use('/books',verifyToken,BookRouter);
+// app.use('/librarys',verifyToken, LibraryRouter);
+app.use('/author',verifyToken, AuthorRouter);
+app.use('/writer',verifyToken, WriterRouter);
+app.use('/publisher',verifyToken, PublisherRouter);
+app.use('/editor',verifyToken, EditorRouter);
+app.use('/booktype',verifyToken, BookTypeRouter);
+app.use('/booklanguage',verifyToken, BookLanguages);
+app.use('/dashboard',verifyToken, DashboardRouter);
 
 const db = require("./models/index");
 // const dbURI = "mongodb://localhost:27017"
 mongoose
-	.connect(db.url, {
+	.connect(process.env.DATABASE_URL, {
 		useNewUrlParser: true,
 		// useCreateIndex: true,
 		useUnifiedTopology: true,
