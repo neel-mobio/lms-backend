@@ -46,7 +46,7 @@ app.use('/dashboard', DashboardRouter);
 const db = require("./models/index");
 // const dbURI = "mongodb://localhost:27017"
 mongoose
-	.connect(process.env.DATABASE_URL, {
+	.connect("mongodb+srv://NeelPatel:NeelPatel@cluster0.odcor.mongodb.net/?retryWrites=true&w=majority", {
 		useNewUrlParser: true,
 		// useCreateIndex: true,
 		useUnifiedTopology: true,
