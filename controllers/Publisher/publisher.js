@@ -41,7 +41,7 @@ exports.listPublisher = async (req, res) => {
         const publishers = await Publishers.find()
         return res.status(200).json({ publishers: publishers })
     } catch (error) {
-        return res.status(400).json({ error: "Something want to wrong..." })
+        return res.status(400).json({ error: "Something went to wrong..." })
     }
 };
 

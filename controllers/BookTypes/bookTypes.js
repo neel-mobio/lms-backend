@@ -41,7 +41,7 @@ exports.listBookType = async (req, res) => {
         const bookTypes = await BookTypes.find()
         return res.status(200).json({ bookTypes: bookTypes })
     } catch (error) {
-        return res.status(400).json({ error: "Something want to wrong..." })
+        return res.status(400).json({ error: "Something went to wrong..." })
     }
 };
 
