@@ -83,7 +83,7 @@ exports.listBooks = async (req, res) => {
         return res.status(200).json({ books: books })
 
     } catch (error) {
-        return res.status(400).json({ error: "Something want to wrong..." })
+        return res.status(400).json({ error: "Something went to wrong..." })
     }
 }
 
@@ -164,6 +164,6 @@ exports.bookCirculation = async (req, res) => {
         return res.status(200).json({ bookCirculation: bookCirculation })
 
     } catch (error) {
-        return res.status(400).json({ error: "Something want to wrong..." })
+        return res.status(400).json({ error: "Something went to wrong..." })
     }
 }

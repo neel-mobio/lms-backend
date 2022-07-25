@@ -41,7 +41,7 @@ exports.listEditor = async (req, res) => {
         const editors = await Editors.find()
         return res.status(200).json({ editors: editors })
     } catch (error) {
-        return res.status(400).json({ error: "Something want to wrong..." })
+        return res.status(400).json({ error: "Something went to wrong..." })
     }
 };
 

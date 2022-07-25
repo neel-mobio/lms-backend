@@ -44,7 +44,7 @@ exports.listWriter = async (req, res) => {
         const writers = await Writers.find()
         return res.status(200).json({ writers: writers })
     } catch (error) {
-        return res.status(400).json({ error: "Something want to wrong..." })
+        return res.status(400).json({ error: "Something went to wrong..." })
     }
 };
 

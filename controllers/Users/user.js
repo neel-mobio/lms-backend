@@ -9,6 +9,7 @@ const BookCirculations = db.BookCirculations;
 
 exports.newUser = (req, res, next) => {
     const data = req.body;
+    console.log(data,"da::::::::")
     Users.find({ user_email: req.body.email })
         .exec()
         .then((user) => {
@@ -74,10 +75,13 @@ exports.newUser = (req, res, next) => {
                                     //         message: err.toString()
                                     //     })
                                     // });
-                            })
+                            return res.status(201).json({
+                                message: "User is created...!!",
+                            });
+                                })
                             .catch((err) => {
                                 console.log(err)
-                                res.status(500).json({
+                                return res.status(500).json({
                                     message: err.toString()
                                 })
                             });
@@ -102,7 +106,7 @@ exports.listUsers = async (req, res) => {
         })
         return res.status(200).json({ users: users })
     } catch (error) {
-        return res.status(400).json({ error: "Something want to wrong..." })
+        return res.status(400).json({ error: "Something went to wrong..." })
     }
 };
 
