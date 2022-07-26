@@ -16,5 +16,6 @@ db.Editors = require('./editors');
 db.BookTypes = require('./booktypes');
 db.BookLanguages = require('./bookLanguage');
 db.UserLogin = require('./userLogin');
+db.Librarys = require("./library");
 
 module.exports = db;
