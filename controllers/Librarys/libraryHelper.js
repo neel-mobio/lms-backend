@@ -19,10 +19,10 @@ const isNumeric = (string) => {
 exports.validationLibraryData = (data) => {
     let errors = [];
     if (isEmpty(data.name)) {
-        errors.push({ msg: "Book name is required" });
+        errors.push({ msg: "Library name is required" });
     }
     if (isEmpty(data.phoneNumber)) {
-        errors.push({ msg: "Phone is required" });
+        errors.push({ msg: "Phone number is required" });
     }
     if (data.phoneNumber.length !== 10) {
         errors.push({ msg: "Phone number should be exact 10 digits" });
