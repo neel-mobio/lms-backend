@@ -17,6 +17,7 @@ var EditorRouter            = require('./routes/editorRouter');
 var BookTypeRouter          = require('./routes/bookTypesRouter');
 var BookLanguages           = require('./routes/languageRouter');
 var DashboardRouter         = require('./routes/dashboardRouter');
+var RoleRouter              = require('./routes/rolesRouter');
 const verifyToken           = require("./routes/validate-token");
 var app                     = express();
 
@@ -42,6 +43,7 @@ app.use('/editor', EditorRouter);
 app.use('/booktype', BookTypeRouter);
 app.use('/booklanguage', BookLanguages);
 app.use('/dashboard', DashboardRouter);
+app.use('/role',RoleRouter);
 
 const db = require("./models/index");
 // const dbURI = "mongodb://localhost:27017"
