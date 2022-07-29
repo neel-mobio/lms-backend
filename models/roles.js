@@ -31,4 +31,4 @@ const roleSchema = new mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model("ROles", roleSchema);
+module.exports = mongoose.model("Roles", roleSchema);
