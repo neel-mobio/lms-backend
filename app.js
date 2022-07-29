@@ -36,7 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', router);
 app.use('/auth',auth);
 app.use('/users',verifyToken,roleValidation, UsersRouter);
-app.use('/books',verifyToken,roleValidation, BookRouter);
+app.use('/books', BookRouter);
 app.use('/librarys',verifyToken,roleValidation, LibraryRouter);
 app.use('/author',verifyToken,roleValidation, AuthorRouter);
 app.use('/writer',verifyToken, roleValidation,WriterRouter);
