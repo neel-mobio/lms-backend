@@ -14,6 +14,7 @@ db.BookLanguages        = require('./bookLanguage');
 db.UserLogin            = require('./userLogin');
 db.Librarys             = require("./library");
 db.Roles                = require("./roles");
+db.Creators             = require("./creator");
 
 const mongoose          = require("mongoose");
 mongoose.Promise        = global.Promise;

@@ -18,7 +18,9 @@ var BookTypeRouter          = require('./routes/bookTypesRouter');
 var BookLanguages           = require('./routes/languageRouter');
 var DashboardRouter         = require('./routes/dashboardRouter');
 var RoleRouter              = require('./routes/rolesRouter');
+var CreatorRouter           = require('./routes/creatorRouter');
 const verifyToken           = require("./routes/validate-token");
+const roleValidation        = require("./routes/role-validation");
 var app                     = express();
 
 // view engine setup
@@ -33,17 +35,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', router);
 app.use('/auth',auth);
-app.use('/users', UsersRouter);
-app.use('/books',BookRouter);
-app.use('/librarys', LibraryRouter);
-app.use('/author', AuthorRouter);
-app.use('/writer', WriterRouter);
-app.use('/publisher', PublisherRouter);
-app.use('/editor', EditorRouter);
-app.use('/booktype', BookTypeRouter);
-app.use('/booklanguage', BookLanguages);
-app.use('/dashboard', DashboardRouter);
-app.use('/role',RoleRouter);
+app.use('/users',verifyToken,roleValidation, UsersRouter);
+app.use('/books',verifyToken,roleValidation, BookRouter);
+app.use('/librarys',verifyToken,roleValidation, LibraryRouter);
+app.use('/author',verifyToken,roleValidation, AuthorRouter);
+app.use('/writer',verifyToken, roleValidation,WriterRouter);
+app.use('/publisher',verifyToken,roleValidation, PublisherRouter);
+app.use('/editor',verifyToken,roleValidation, EditorRouter);
+app.use('/booktype',verifyToken,roleValidation, BookTypeRouter);
+app.use('/booklanguage',verifyToken,roleValidation, BookLanguages);
+app.use('/dashboard',verifyToken, DashboardRouter);
+app.use('/role',verifyToken,roleValidation,RoleRouter);
+app.use('/creator',verifyToken,roleValidation,CreatorRouter)
 
 const db = require("./models/index");
 // const dbURI = "mongodb://localhost:27017"
